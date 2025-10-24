@@ -1,0 +1,49 @@
+name: Build DevizAuto (Win + macOS)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Build web (if any)
+        run: npm run build || echo "no web build"
+      - name: Pack Windows (.exe)
+        run: npx electron-builder --win nsis
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DevizAuto-Windows
+          path: dist/*.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Build web (if any)
+        run: npm run build || echo "no web build"
+      - name: Pack macOS (.dmg)
+        run: npx electron-builder --mac dmg
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DevizAuto-macOS
+          path: dist/*.dmg
