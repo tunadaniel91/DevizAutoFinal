@@ -31,17 +31,27 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
+
+      # 🧩 Adaugă acest pas nou:
+      - name: Install Python build tools
+        run: |
+          brew update
+          brew install python-setuptools
+          python3 -m ensurepip --upgrade
+          python3 -m pip install setuptools wheel
+
       - name: Install deps
-        run: npm ci
-      - name: Build web (if any)
-        run: npm run build || echo "no web build"
-      - name: Pack macOS (.dmg)
+        run: npm install --build-from-source better-sqlite3
+
+      - name: Build macOS (.dmg)
         run: npx electron-builder --mac dmg
+
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
         with:
