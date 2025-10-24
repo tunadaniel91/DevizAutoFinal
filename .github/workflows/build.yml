@@ -33,7 +33,7 @@ jobs:
 
       # ✅ 4. Construim installerul final
       - name: Build Windows installer
-        run: npx electron-builder --win nsis
+        run: npx electron-builder --win nsis --publish never
 
       # ✅ 5. Urcăm fișierul .exe rezultat
       - name: Upload Windows artifact
