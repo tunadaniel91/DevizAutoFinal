@@ -16,12 +16,26 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      # ✅ 1. Instalăm dependențele
+      - name: Install deps
         run: npm install
 
+      # ✅ 2. Construim TypeScript înainte de electron-builder
+      - name: Build main process
+        run: npm run build:main
+
+      - name: Build renderer process
+        run: npm run build:renderer
+
+      # ✅ 3. Reconstruim better-sqlite3 pentru Electron 22
+      - name: Rebuild native modules
+        run: npx electron-rebuild -f -w better-sqlite3
+
+      # ✅ 4. Construim installerul final
       - name: Build Windows installer
         run: npx electron-builder --win nsis
 
+      # ✅ 5. Urcăm fișierul .exe rezultat
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
@@ -39,15 +53,16 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      # 🧩 Instalează tool-urile necesare pentru better-sqlite3
-      - name: Prepare Python build env
+      # 🧩 Creăm un mediu virtual Python și instalăm tool-urile lipsă
+      - name: Setup Python build env
         run: |
           brew update
           brew install python-setuptools
-          python3 -m ensurepip --break-system-packages --upgrade
-          python3 -m pip install --break-system-packages setuptools wheel
+          python3 -m venv venv
+          source venv/bin/activate
+          python3 -m pip install --upgrade pip setuptools wheel
 
-      # 🧱 Compilează better-sqlite3 pentru Electron
+      # 🧱 Compilăm better-sqlite3 pentru Electron
       - name: Install deps and rebuild native modules
         env:
           ELECTRON_SKIP_BINARY_DOWNLOAD: 1
@@ -56,7 +71,7 @@ jobs:
           npm install
           npx electron-rebuild -f -w better-sqlite3
 
-      # 🍏 Construiește aplicația .dmg
+      # 🍏 Construim .dmg-ul final
       - name: Build macOS dmg
         run: npx electron-builder --mac dmg
 
