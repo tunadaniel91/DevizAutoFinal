@@ -1,0 +1,21 @@
+appId: com.devizauto.app
+productName: Deviz Auto
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/**/*
+  - package.json
+win:
+  icon: src/assets/icon.ico
+  target:
+    - target: nsis
+      "arch": [
+            "ia32"
+          ]
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Deviz Auto

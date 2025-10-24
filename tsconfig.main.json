@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+      "target": "ES2018",
+      "module": "CommonJS",
+      "lib": ["ES2018", "DOM"],
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
+      "outDir": "./dist/main",
+      "rootDir": "./src/main",
+      "allowSyntheticDefaultImports": true,
+      "types": ["electron", "node"]
+    },
+    "include": ["src/main/**/*"],
+    "exclude": ["node_modules"]
+  }

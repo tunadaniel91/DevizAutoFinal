@@ -1,0 +1,485 @@
+const HTML_TEMPLATE = `<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Comanda Service Auto</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 10pt;
+      color: #000;
+      background: white;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      max-height: 297mm;
+      padding: 0;
+      margin: 0 auto;
+      background: white;
+      overflow: hidden;
+    }
+
+    .header {
+      background: #1A73E8;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .header-left h1 {
+      font-size: 18pt;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .header-left p {
+      font-size: 9pt;
+    }
+
+    .header-right {
+      border: 1px solid white;
+      padding: 8px;
+      font-size: 8pt;
+      line-height: 1.4;
+    }
+
+    .order-info {
+      padding: 10px 20px;
+      font-size: 9pt;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .vehicle-section {
+      margin: 10px 20px;
+    }
+
+    .section-header {
+      background: #1A73E8;
+      color: white;
+      padding: 8px 12px;
+      font-weight: bold;
+      font-size: 10pt;
+    }
+
+    .vehicle-box {
+      border: 2px solid #1A73E8;
+      padding: 12px;
+    }
+
+    .vehicle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      font-size: 9pt;
+    }
+
+    .vehicle-item {
+      padding: 3px 0;
+    }
+
+    .vehicle-label {
+      color: #666;
+    }
+
+    .vehicle-value {
+      font-weight: bold;
+    }
+
+    .divider {
+      border-bottom: 1px solid #ccc;
+      margin: 10px 20px;
+    }
+
+    .materials-section,
+    .labor-section {
+      margin: 10px 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8pt;
+    }
+
+    thead tr {
+      background: #E8F0FE;
+      border: 1px solid #1A73E8;
+    }
+
+    th {
+      color: #1A73E8;
+      font-weight: bold;
+      padding: 6px 12px;
+      text-align: left;
+      border: 1px solid #1A73E8;
+    }
+
+    th.center {
+      text-align: center;
+    }
+
+    th.right {
+      text-align: right;
+    }
+
+    tbody tr {
+      border: 1px solid #ccc;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    tbody tr:nth-child(odd) {
+      background: white;
+    }
+
+    td {
+      padding: 4px 12px;
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+      min-height: 18px;
+    }
+
+    td.center {
+      text-align: center;
+    }
+
+    td.right {
+      text-align: right;
+      font-weight: bold;
+    }
+
+    .total-box {
+      margin: 10px 20px;
+      display: flex;
+      gap: 0;
+    }
+
+    .total-labels {
+      flex: 3;
+    }
+
+    .total-values {
+      flex: 1;
+    }
+
+    .total-currency {
+      flex: 1;
+    }
+
+    .total-row {
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      padding: 6px 12px;
+      font-size: 9pt;
+    }
+
+    .total-value-cell {
+      border: 1px solid #ccc;
+      background: white;
+      padding: 6px 12px;
+      font-size: 9pt;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .total-currency-cell {
+      border: 1px solid #ccc;
+      background: white;
+      padding: 6px 12px;
+      font-size: 9pt;
+    }
+
+    .grand-total-label {
+      border: 2px solid #1A73E8;
+      background: #E8F0FE;
+      padding: 8px 12px;
+      font-size: 11pt;
+      font-weight: bold;
+      color: #1A73E8;
+    }
+
+    .grand-total-value {
+      border: 2px solid #1A73E8;
+      background: white;
+      padding: 8px 12px;
+      font-size: 11pt;
+      font-weight: bold;
+      color: #1A73E8;
+      text-align: right;
+    }
+
+    .grand-total-currency {
+      border: 2px solid #1A73E8;
+      background: white;
+      padding: 8px 12px;
+      font-size: 11pt;
+      font-weight: bold;
+      color: #1A73E8;
+    }
+
+    .warranty-section {
+      margin: 15px 20px;
+    }
+
+    .signature-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9pt;
+      margin: 8px 0;
+    }
+
+    .warranty-box {
+      border: 2px solid #1A73E8;
+      background: #FFFEF7;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .warranty-title {
+      font-weight: bold;
+      font-size: 9pt;
+      margin-bottom: 8px;
+    }
+
+    .warranty-text {
+      font-size: 8pt;
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+
+    .warranty-text ul {
+      margin: 6px 0 6px 16px;
+    }
+
+    .warranty-text li {
+      margin: 4px 0;
+    }
+
+    .client-signature {
+      margin-top: 10px;
+      font-size: 8pt;
+    }
+
+    .note-section {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #ccc;
+    }
+
+    .note-text {
+      font-size: 8pt;
+      color: #666;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    @media print {
+      .page:first-child {
+        page-break-after: always;
+      }
+
+      .page:last-child {
+        page-break-after: avoid;
+      }
+      
+      body {
+        max-height: 594mm; /* 2 pages exactly */
+        overflow: hidden;
+      }
+      
+      .warranty-section,
+      .note-section {
+        page-break-after: avoid;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <h1>EXTREME SERVICE</h1>
+      <p>Tel: 0753 767 116</p>
+    </div>
+    <div class="header-right">
+      J12/199/2008<br>
+      RO23091377<br>
+      Str. Al. Vlahuta, nr. 32-23<br>
+      Banca Transilvania
+    </div>
+  </div>
+
+  <div class="order-info">
+    <span>Comanda nr:______________</span>
+    <span>Data:_____/_____/_____</span>
+  </div>
+
+  <div class="vehicle-section">
+    <div class="section-header">INFORMATII VEHICUL</div>
+    <div class="vehicle-box">
+      <div class="vehicle-grid">
+        <div class="vehicle-item">
+          <span class="vehicle-label">Numar inmatriculare: </span>
+          <span class="vehicle-value">{{numarInmatriculare}}</span>
+        </div>
+        <div class="vehicle-item">
+          <span class="vehicle-label">Marca Auto: </span>
+          <span class="vehicle-value">{{marcaAuto}}</span>
+        </div>
+        
+        <div class="vehicle-item">
+          <span class="vehicle-label">Model Auto: </span>
+          <span class="vehicle-value">{{modelAuto}}</span>
+        </div>
+        <div class="vehicle-item">
+          <span class="vehicle-label">Motorizare: </span>
+          <span class="vehicle-value">{{motorizare}}</span>
+        </div>
+        
+        <div class="vehicle-item">
+          <span class="vehicle-label">Serie sasiu: </span>
+          <span class="vehicle-value">{{serieSasiu}}</span>
+        </div>
+        
+        <div class="vehicle-item">
+          <span class="vehicle-label">An fabricatie: </span>
+          <span class="vehicle-value">{{anFabricatie}}</span>
+        </div>
+        <div class="vehicle-item">
+          <span class="vehicle-label">Kilometri: </span>
+          <span class="vehicle-value">{{kilometri}}</span>
+        </div>
+        
+        <div class="vehicle-item">
+          <span class="vehicle-label">Data intrare service: </span>
+          <span class="vehicle-value">{{dataIntrare}}</span>
+        </div>
+        <div class="vehicle-item">
+          <span class="vehicle-label">Nume proprietar: </span>
+          <span class="vehicle-value">{{numeProprietar}}</span>
+        </div>
+        
+        <div class="vehicle-item">
+          <span class="vehicle-label">Numar telefon: </span>
+          <span class="vehicle-value">{{numarTelefon}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="materials-section">
+    <div class="section-header">DETALIERE MATERIALE</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 50%;">MATERIALE</th>
+          <th class="center" style="width: 25%;">CANTITATE</th>
+          <th class="right" style="width: 25%;">{{pretHeaderMateriale}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{materialeRows}}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="total-box">
+    <div class="total-labels">
+      <div class="total-row">{{totalMaterialeLabel}}</div>
+    </div>
+    <div class="total-values">
+      <div class="total-value-cell">{{totalMaterialeTVA}}</div>
+    </div>
+    <div class="total-currency">
+      <div class="total-currency-cell">RON</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="labor-section">
+    <div class="section-header">DETALIERE MANOPERA</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 70%;">LUCRARI</th>
+          <th class="right" style="width: 30%;">{{pretHeaderLucrari}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{lucrariRows}}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="total-box">
+    <div class="total-labels">
+      <div class="total-row">{{totalMaterialeLabel}}</div>
+      <div class="total-row">{{totalLucrariLabel}}</div>
+      <div class="grand-total-label">TOTAL</div>
+    </div>
+    <div class="total-values">
+      <div class="total-value-cell">{{totalMaterialeTVA}}</div>
+      <div class="total-value-cell">{{totalLucrariTVA}}</div>
+      <div class="grand-total-value">{{grandTotal}}</div>
+    </div>
+    <div class="total-currency">
+      <div class="total-currency-cell">RON</div>
+      <div class="total-currency-cell">RON</div>
+      <div class="grand-total-currency">RON</div>
+    </div>
+  </div>
+
+  <div class="warranty-section">
+    <div class="signature-row">
+      <span><strong>Verificat reparatie: Suciu Dan</strong></span>
+      <span>Semnatura: ______________________</span>
+    </div>
+
+    <div class="warranty-box">
+      <div class="warranty-title">CERTIFICAT DE CALITATE SI GARANTIE:</div>
+      <div class="warranty-text">
+        <p>Unitatea noastra garanteaza lucrarile de reparatii executate dupa cum urmeaza:</p>
+        <ul>
+          <li>• 3 luni de la data receptiei vehiculului daca lucrarea de reparatii nu a necesitat inlocuiri de piese sau daca lucrarea s-a executat cu piesa clientului.</li>
+          <li>• 24 luni pentru piesele furnizate de unitate, conform legii nr.449/2003.</li>
+        </ul>
+        <div class="signature-row" style="margin-top: 8px;">
+          <span>Responsabil pentru inspectia finala: ______________________</span>
+          <span>Semnatura: ______________________</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="client-signature">
+      <p class="warranty-text">Am preluat vehiculul cu lucrarile executate conform foii de comanda si cu inventarul complet.</p>
+      <p class="warranty-text" style="font-weight: bold; margin-top: 6px;">Semnatura client: ______________________</p>
+    </div>
+
+    <div class="note-section">
+      <p class="note-text">Nota: Unitatea noastra nu este raspunzatoare pentru obiectele personale lasate in autovehicul.</p>
+      <p class="note-text">Garantia este conditionata de utilizarea in exploatare a autovehiculului conform prescriptiilor constructorului.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+`

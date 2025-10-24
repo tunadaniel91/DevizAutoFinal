@@ -1,0 +1,92 @@
+{
+  "name": "deviz-auto-electron",
+  "version": "1.0.0",
+  "description": "Deviz Auto Application",
+  "build": {
+    "appId": "com.deviz.auto",
+    "productName": "Deviz Auto",
+    "files": [
+      "!dist/",
+      "dist/main/**/*",
+      "dist/renderer/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "icon": "assets/icon.ico",
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "main": "dist/main/main.js",
+  "scripts": {
+    "start": "npm run build:main && electron .",
+    "build": "npm run build:main && npm run build:renderer",
+    "build:win32": "electron-builder --win --ia32",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:renderer": "webpack --config webpack.config.js",
+    "package": "electron-builder",
+    "postinstall": "electron-builder install-app-deps",
+    "rebuild:32": "electron-rebuild --arch=ia32",
+    "dist:win": "electron-builder --win --x64",
+    "dist:all": "electron-builder --win --ia32 --x64",
+    "dist:x64": "electron-builder --win --x64",
+    "dist:ia32": "electron-builder --win --ia32"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-label": "^2.0.0",
+    "@radix-ui/react-slot": "^1.0.1",
+    "@radix-ui/react-tabs": "^1.1.12",
+    "@radix-ui/react-popover": "^1.0.7",
+    "@types/pdfkit": "^0.13.5",
+    "better-sqlite3": "^11.5.0",
+    "class-variance-authority": "^0.4.0",
+    "clsx": "^1.2.1",
+    "global": "^4.4.0",
+    "jspdf": "^2.5.2",
+    "lucide-react": "^0.216.0",
+    "pdfkit": "^0.15.0",
+    "react": "^18.3.1",
+    "react-day-picker": "^8.10.0",
+    "react-dom": "^18.3.1",
+    "react-toastify": "^9.1.1",
+    "sequelize": "^6.37.4",
+    "tailwind-merge": "^1.10.0",
+    "tailwindcss-animate": "^1.0.5",
+    "path": "0.12.7",
+    "fs": "0.0.1-security",
+    "next": "15.5.5",
+    "react-window": "2.2.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.3",
+    "@types/electron": "^1.6.10",
+    "@types/node": "^18.16.3",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "@types/react-window": "^1.8.8",
+    "@types/webpack-env": "^1.16.3",
+    "autoprefixer": "^10.4.14",
+    "css-loader": "^6.7.3",
+    "electron": "^22.0.0",
+    "electron-builder": "^23.6.0",
+    "electron-rebuild": "^3.2.9",
+    "html-webpack-plugin": "^5.6.2",
+    "postcss": "^8.4.23",
+    "postcss-loader": "^7.3.0",
+    "style-loader": "^3.3.2",
+    "tailwindcss": "^3.4.17",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.5.4",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  }
+}
