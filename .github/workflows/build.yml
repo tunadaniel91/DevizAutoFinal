@@ -39,16 +39,15 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      # 🧩 Fix: instalăm tot ce trebuie pentru a compila better-sqlite3
-      - name: Install build tools for better-sqlite3
+      # 🧩 Instalează tool-urile necesare pentru better-sqlite3
+      - name: Prepare Python build env
         run: |
           brew update
           brew install python-setuptools
-          python3 -m ensurepip --upgrade
-          python3 -m pip install setuptools wheel
-          sudo xcode-select --install || true
+          python3 -m ensurepip --break-system-packages --upgrade
+          python3 -m pip install --break-system-packages setuptools wheel
 
-      # 🧱 Instalăm dependențele și compilăm better-sqlite3 pentru Electron
+      # 🧱 Compilează better-sqlite3 pentru Electron
       - name: Install deps and rebuild native modules
         env:
           ELECTRON_SKIP_BINARY_DOWNLOAD: 1
@@ -57,7 +56,7 @@ jobs:
           npm install
           npx electron-rebuild -f -w better-sqlite3
 
-      # 🧰 Construim aplicația .dmg
+      # 🍏 Construiește aplicația .dmg
       - name: Build macOS dmg
         run: npx electron-builder --mac dmg
 
