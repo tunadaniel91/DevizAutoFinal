@@ -15,13 +15,14 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-      - name: Install deps
-        run: npm ci
-      - name: Build web (if any)
-        run: npm run build || echo "no web build"
-      - name: Pack Windows (.exe)
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Windows installer
         run: npx electron-builder --win nsis
-      - name: Upload Windows artifacts
+
+      - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: DevizAuto-Windows
@@ -38,21 +39,29 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      # 🧩 Adaugă acest pas nou:
-      - name: Install Python build tools
+      # 🧩 Fix: instalăm tot ce trebuie pentru a compila better-sqlite3
+      - name: Install build tools for better-sqlite3
         run: |
           brew update
           brew install python-setuptools
           python3 -m ensurepip --upgrade
           python3 -m pip install setuptools wheel
+          sudo xcode-select --install || true
 
-      - name: Install deps
-        run: npm install --build-from-source better-sqlite3
+      # 🧱 Instalăm dependențele și compilăm better-sqlite3 pentru Electron
+      - name: Install deps and rebuild native modules
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: 1
+          npm_config_build_from_source: true
+        run: |
+          npm install
+          npx electron-rebuild -f -w better-sqlite3
 
-      - name: Build macOS (.dmg)
+      # 🧰 Construim aplicația .dmg
+      - name: Build macOS dmg
         run: npx electron-builder --mac dmg
 
-      - name: Upload macOS artifacts
+      - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: DevizAuto-macOS
